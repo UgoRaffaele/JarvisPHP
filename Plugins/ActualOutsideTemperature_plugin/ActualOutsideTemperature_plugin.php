@@ -9,8 +9,8 @@ use JarvisPHP\Core\JarvisTTS;
 
 /**
  * ActualOutsideTemperature_plugin
- *
- * @author Stefano Bianchini
+ * @author Ugo Raffaele Piemontese
+ * @website http://www.ugopiemontese.eu
  */
 class ActualOutsideTemperature_plugin implements \JarvisPHP\Core\JarvisPluginInterface {
     /**
@@ -19,7 +19,7 @@ class ActualOutsideTemperature_plugin implements \JarvisPHP\Core\JarvisPluginInt
      */
     var $priority = 4;
     
-    var $place = "Rimini, Italy";
+    var $place = "Lecce, Italy";
     
     /**
      * the behaviour of plugin
@@ -38,8 +38,7 @@ class ActualOutsideTemperature_plugin implements \JarvisPHP\Core\JarvisPluginInt
         // Convert JSON to PHP object
         $phpObj =  json_decode($json);
         $answer = sprintf(JarvisLanguage::translate('actual_temperature_outside_is',get_called_class()),$phpObj->query->results->channel->item->condition->temp, $phpObj->query->results->channel->atmosphere->humidity);
-        JarvisTTS::speak($answer);
-        $response = new \JarvisPHP\Core\JarvisResponse($answer, JarvisPHP::getRealClassName(get_called_class()), true);
+        $response = new \JarvisPHP\Core\JarvisResponse($answer, JarvisTTS::speak($answer), JarvisPHP::getRealClassName(get_called_class()), true);
         $response->send();
         
     }

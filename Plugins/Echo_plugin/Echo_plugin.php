@@ -9,8 +9,8 @@ use JarvisPHP\Core\JarvisTTS;
 
 /**
  * A simple Echo plugin
- * @author Stefano Bianchini
- * @website http://www.stefanobianchini.net
+ * @author Ugo Raffaele Piemontese
+ * @website http://www.ugopiemontese.eu
  */
 class Echo_plugin implements \JarvisPHP\Core\JarvisPluginInterface{
     /**
@@ -32,8 +32,7 @@ class Echo_plugin implements \JarvisPHP\Core\JarvisPluginInterface{
             JarvisPHP::getLogger()->debug('Answering to command: "'.$command.'"');
             $answer = JarvisLanguage::translate('let_s_play',get_called_class());
         }
-        JarvisTTS::speak($answer);
-        $response = new \JarvisPHP\Core\JarvisResponse($answer, JarvisPHP::getRealClassName(get_called_class()), true);
+        $response = new \JarvisPHP\Core\JarvisResponse($answer, JarvisTTS::speak($answer), JarvisPHP::getRealClassName(get_called_class()), true);
         $response->send();
     }
     

@@ -12,3 +12,9 @@ define('_ESPEAK_LANGUAGE', _LANGUAGE);
 
 //Amplitude (espeak -a <amplitude>)
 define('_ESPEAK_AMPLITUDE','100');
+
+//Path to save file
+define('_ESPEAK_PATH', _PATH);
+
+//Absolute Path to saved file
+define('_ESPEAK_ABSPATH', _ABSPATH);

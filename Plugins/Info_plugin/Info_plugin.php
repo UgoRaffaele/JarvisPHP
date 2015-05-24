@@ -9,8 +9,8 @@ use JarvisPHP\Core\JarvisTTS;
 
 /**
  * Info plugin
- * @author Stefano Bianchini
- * @website http://www.stefanobianchini.net
+ * @author Ugo Raffaele Piemontese
+ * @website http://www.ugopiemontese.eu
  */
 class Info_plugin implements \JarvisPHP\Core\JarvisPluginInterface{
     /**
@@ -36,8 +36,7 @@ class Info_plugin implements \JarvisPHP\Core\JarvisPluginInterface{
             $answer = sprintf(JarvisLanguage::translate('my_name_is',get_called_class()),_SYSTEM_NAME, $_SERVER['SERVER_NAME'],$_SERVER['SERVER_ADDR']);
             
         }
-        JarvisTTS::speak($answer);
-        $response = new \JarvisPHP\Core\JarvisResponse($answer, JarvisPHP::getRealClassName(get_called_class()), true);
+        $response = new \JarvisPHP\Core\JarvisResponse($answer, JarvisTTS::speak($answer), JarvisPHP::getRealClassName(get_called_class()), true);
         $response->send();
     }
     /**
