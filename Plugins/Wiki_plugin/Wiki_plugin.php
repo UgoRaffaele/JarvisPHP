@@ -1,6 +1,6 @@
 <?php
 
-namespace JarvisPHP\Plugins\ActualOutsideTemperature_plugin;
+namespace JarvisPHP\Plugins\Wiki_plugin;
 
 use JarvisPHP\Core\JarvisSession;
 use JarvisPHP\Core\JarvisPHP;
@@ -8,39 +8,43 @@ use JarvisPHP\Core\JarvisLanguage;
 use JarvisPHP\Core\JarvisTTS;
 
 /**
- * ActualOutsideTemperature_plugin
+ * A simple Wiki plugin
  * @author Ugo Raffaele Piemontese
  * @website http://www.ugopiemontese.eu
  */
-class ActualOutsideTemperature_plugin implements \JarvisPHP\Core\JarvisPluginInterface {
+class Wiki_plugin implements \JarvisPHP\Core\JarvisPluginInterface{
     /**
      * Priority of plugin
      * @var int  
      */
     var $priority = 4;
     
-    var $place = "Lecce, Italy";
-    
     /**
      * the behaviour of plugin
      * @param string $command
      */
     function answer($command) {
-        
-        $BASE_URL = "http://query.yahooapis.com/v1/public/yql";
-        $yql_query = 'select * from weather.forecast where woeid in (select woeid from geo.places(1) where text="'.$this->place.'") and u="c"';
-        $yql_query_url = $BASE_URL . "?q=" . urlencode($yql_query) . "&format=json";
-        
-        // Make call with cURL
-        $session = curl_init($yql_query_url);
-        curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
-        $json = curl_exec($session);
-        // Convert JSON to PHP object
-        $phpObj =  json_decode($json);
-        $answer = sprintf(JarvisLanguage::translate('actual_temperature_outside_is',get_called_class()),$phpObj->query->results->channel->item->condition->temp, $phpObj->query->results->channel->atmosphere->humidity);
+        $answer = '';
+        if (JarvisSession::get('echo_not_first_passage')) {
+			$wiki_query_url = _WIKI_URL . "?action=opensearch&search=" . urlencode($command) . "&namespace=0&format=xml&limit=1";
+			// Make call with cURL
+			$session = curl_init($wiki_query_url);
+			curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
+			$result = curl_exec($session);
+			// Convert XML to PHP object
+			$xml = simplexml_load_string($result);
+			if (strlen($xml->Section->Item->Description) > 0) {
+				$answer = sprintf(JarvisLanguage::translate('search_result_is',get_called_class()), $xml->Section->Item->Description);
+			} else {
+				$answer = JarvisLanguage::translate('nothing_found',get_called_class());
+			}
+        } else {
+            JarvisSession::set('echo_not_first_passage',true);
+            JarvisPHP::getLogger()->debug('Answering to command: "'.$command.'"');
+            $answer = JarvisLanguage::translate('let_me_search',get_called_class());
+        }
         $response = new \JarvisPHP\Core\JarvisResponse($answer, JarvisTTS::speak($answer), JarvisPHP::getRealClassName(get_called_class()), true);
         $response->send();
-        
     }
     
     /**
@@ -65,6 +69,6 @@ class ActualOutsideTemperature_plugin implements \JarvisPHP\Core\JarvisPluginInt
      * @return boolean
      */
     function hasSession() {
-        return false;
+        return true;
     }
 }
