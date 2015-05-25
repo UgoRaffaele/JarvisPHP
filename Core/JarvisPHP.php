@@ -123,8 +123,7 @@ class JarvisPHP {
                 $choosen_plugin->answer($command);
             } else {
                 JarvisPHP::getLogger()->debug('No plugin found for command: '.$command);
-                JarvisTTS::speak(JarvisLanguage::translate('core_command_not_understand'));
-                $response = new \JarvisPHP\Core\JarvisResponse(JarvisLanguage::translate('core_command_not_understand'));
+                $response = new \JarvisPHP\Core\JarvisResponse(JarvisLanguage::translate('core_command_not_understand'), JarvisTTS::speak(JarvisLanguage::translate('core_command_not_understand')));
                 $response->send();
             }
         }
